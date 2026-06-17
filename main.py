@@ -6,7 +6,35 @@ from juego import Partida, BaseCentral
 from defensor import Torre, Muro
 from atacante import Unidad
 
-def vtn_principal():  #vtn: ventana
+# FACCIONES 
+FACCIONES = {
+    "olimpo": {
+        "nombre": "Olimpo",
+        "descripcion": "Poder divino y rayos del cielo",
+        "color_a": "#6aaa3c",
+        "color_b": "#5e9c33",
+        "color_preview": "#4a8c3f",
+    },
+    "oscura": {
+        "nombre": "Oscura",
+        "descripcion": "Sombras y neblina como escudo",
+        "color_a": "#3a2060",
+        "color_b": "#2e1850",
+        "color_preview": "#5e35b1",
+    },
+    "volcan": {
+        "nombre": "Volcán",
+        "descripcion": "Fuego y lava protegen la base",
+        "color_a": "#7d2c14",
+        "color_b": "#5e2010",
+        "color_preview": "#b5381d",
+    }
+}
+
+
+#VENTANA PRINCIPAL 
+
+def vtn_principal():
     vtn = tk.Tk()
     vtn.title("Defensa y Asalto")
     vtn.geometry("1300x800")
@@ -30,109 +58,34 @@ def vtn_principal():  #vtn: ventana
     img_salir = ImageTk.PhotoImage(
         Image.open("Imagenes/btn_salir.png").resize((600, 350))
     )
-    canvas = tk.Canvas(
-        vtn,
-        width=1300,
-        height=800,
-        highlightthickness=0
-    )
-    canvas.pack(fill="both", expand=True)
 
-    canvas.create_image(0,0,
-        image=img_fondo,
-        anchor="nw"
-    )
-    # POSICIONES 
+    canvas = tk.Canvas(vtn, width=1300, height=800, highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(0, 0, image=img_fondo, anchor="nw")
+
     X_BOTONES = 670
     Y_INICIAL = 360
     ESPACIO = 85
-#botones
-    canvas.create_image(
-        X_BOTONES,
-        Y_INICIAL,
-        image=img_jugar
-    )
-    canvas.create_image(
-        X_BOTONES,
-        Y_INICIAL + ESPACIO,
-        image=img_registrar
-    )
-    canvas.create_image(
-        X_BOTONES,
-        Y_INICIAL + ESPACIO * 2,
-        image=img_ranking
-    )
-    canvas.create_image(
-        X_BOTONES,
-        Y_INICIAL + ESPACIO * 3,
-        image=img_info
-    )
-    canvas.create_image(
-        X_BOTONES,
-        Y_INICIAL + ESPACIO * 4,
-        image=img_salir
-    )
 
-    def Zclick(x1, y1, x2, y2, funcion):
-        zona = canvas.create_rectangle(
-            x1,
-            y1,
-            x2,
-            y2,
-            outline="",
-            fill=""
-        )
-        canvas.tag_bind(
-            zona,
-            "<Button-1>",
-            lambda e: funcion()
-        )
-        canvas.tag_bind(
-            zona,
-            "<Enter>",
-            lambda e: canvas.config(cursor="hand2")
-        )
-        canvas.tag_bind(
-            zona,
-            "<Leave>",
-            lambda e: canvas.config(cursor="")
-        )
+    canvas.create_image(X_BOTONES, Y_INICIAL, image=img_jugar)
+    canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO, image=img_registrar)
+    canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO * 2, image=img_ranking)
+    canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO * 3, image=img_info)
+    canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO * 4, image=img_salir)
+
+    def Zclick(x1, y1, x2, y2, funcion): #zona donde hace click
+        zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
+        canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
+        canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
+        canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
         return zona
-    Zclick(
-        430,
-        325,
-        910,
-        395,
-        lambda: vtn_iniciar_sesion(vtn)
-    )
-    Zclick(
-        430,
-        410,
-        910,
-        480,
-        lambda: vtn_registrarse(vtn)
-    )
-    Zclick(
-        430,
-        495,
-        910,
-        565,
-        lambda: vtn_ranking(vtn)
-    )
-    Zclick(
-        430,
-        580,
-        910,
-        650,
-        lambda: vtn_informacion(vtn)
-    )
-    Zclick(
-        430,
-        665,
-        910,
-        735,
-        vtn.destroy
-    )
+
+    Zclick(430, 325, 910, 395, lambda: vtn_iniciar_sesion(vtn))
+    Zclick(430, 410, 910, 480, lambda: vtn_registrarse(vtn))
+    Zclick(430, 495, 910, 565, lambda: vtn_ranking(vtn))
+    Zclick(430, 580, 910, 650, lambda: vtn_informacion(vtn))
+    Zclick(430, 665, 910, 735, vtn.destroy)
+
     canvas.img_fondo = img_fondo
     canvas.img_jugar = img_jugar
     canvas.img_registrar = img_registrar
@@ -141,6 +94,7 @@ def vtn_principal():  #vtn: ventana
     canvas.img_salir = img_salir
     vtn.mainloop()
 
+# REGISTRARSE 
 def vtn_registrarse(principal):
     win = tk.Toplevel(principal)
     win.title("Registrarse")
@@ -188,7 +142,7 @@ def vtn_registro_exitoso(principal):
     tk.Label(win, text="Ya puedes iniciar sesión.", font=("Arial", 11)).pack()
     tk.Button(win, text="Volver al menú", font=("Arial", 11), command=win.destroy).pack(pady=20)
 
-
+# INICIAR SESIÓN 
 def vtn_iniciar_sesion(principal):
     win = tk.Toplevel(principal)
     win.title("Iniciar sesión")
@@ -218,6 +172,8 @@ def vtn_iniciar_sesion(principal):
     tk.Button(win, text="Iniciar sesión", width=15, font=("Arial", 11), command=login).pack(pady=15)
 
 
+# MENÚ DE JUEGO 
+
 def vtn_menu_juego(principal, jugador):
     win = tk.Toplevel(principal)
     win.title("Menú de juego")
@@ -227,14 +183,52 @@ def vtn_menu_juego(principal, jugador):
     tk.Label(win, text=f"Bienvenido, {jugador.username}!", font=("Arial", 16, "bold")).pack(pady=30)
 
     tk.Button(win, text="Nueva partida", width=20, font=("Arial", 12),
-              command=lambda: vtn_segunda_sesion(win, jugador)).pack(pady=8)
+              command=lambda: vtn_facciones(win, f"FACCIÓN — {jugador.username}",
+                                            lambda f1: vtn_segunda_sesion(win, jugador, f1))).pack(pady=8)
     tk.Button(win, text="Ver ranking", width=20, font=("Arial", 12),
               command=lambda: vtn_ranking(win)).pack(pady=8)
     tk.Button(win, text="Cerrar sesión", width=20, font=("Arial", 12),
               command=win.destroy).pack(pady=8)
 
 
-def vtn_segunda_sesion(menu_win, jugador1):
+# SELECCIÓN DE FACCIÓN 
+
+def vtn_facciones(padre, titulo, on_select):
+    win = tk.Toplevel(padre)
+    win.title("Seleccionar Facción")
+    win.geometry("720x380")
+    win.resizable(False, False)
+
+    tk.Label(win, text=titulo, font=("Arial", 18, "bold")).pack(pady=20)
+
+    frame_cards = tk.Frame(win)
+    frame_cards.pack(pady=10)
+
+    def seleccionar(faccion):
+        win.destroy()
+        on_select(faccion)
+
+    for key, data in FACCIONES.items():
+        card = tk.Frame(frame_cards, relief="solid", borderwidth=2, padx=10, pady=10)
+        card.pack(side="left", padx=15)
+
+        prev = tk.Canvas(card, width=160, height=90)
+        prev.pack()
+        for fi in range(3):
+            for fj in range(3):
+                color = data["color_a"] if (fi + fj) % 2 == 0 else data["color_b"]
+                prev.create_rectangle(fj * 54, fi * 30, (fj + 1) * 54, (fi + 1) * 30,
+                                      fill=color, outline="")
+
+        tk.Label(card, text=data["nombre"], font=("Arial", 13, "bold")).pack(pady=5)
+        tk.Button(card, text="Seleccionar", font=("Arial", 10),
+                  bg=data["color_preview"], fg="black",
+                  command=lambda k=key: seleccionar(k)).pack(pady=8)
+
+
+# SEGUNDA SESIÓN 
+
+def vtn_segunda_sesion(menu_win, jugador1, faccion1):
     win = tk.Toplevel(menu_win)
     win.title("Segundo jugador")
     win.geometry("350x250")
@@ -256,13 +250,14 @@ def vtn_segunda_sesion(menu_win, jugador1):
         jugador2, msg = iniciar_sesion(username, password)
         if jugador2:
             win.destroy()
-            vtn_partida(menu_win, jugador1, jugador2)
+            vtn_facciones(menu_win, f"FACCIÓN — {jugador2.username}",
+                          lambda f2: vtn_partida(menu_win, jugador1, jugador2, faccion1, f2))
         else:
             messagebox.showerror("Error", msg, parent=win)
 
     tk.Button(win, text="Iniciar sesión", width=15, font=("Arial", 11), command=login_j2).pack(pady=15)
 
-
+# RANKING 
 def vtn_ranking(padre):
     win = tk.Toplevel(padre)
     win.title("Ranking")
@@ -287,6 +282,8 @@ def vtn_ranking(padre):
     tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
 
 
+# INFORMACIÓN 
+
 def vtn_informacion(padre):
     win = tk.Toplevel(padre)
     win.title("Información")
@@ -308,10 +305,10 @@ def vtn_informacion(padre):
     tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
 
 
+#PARTIDA 
 
-CELL = 52  # tamaño de cada celda en píxeles
+CELL = 52
 
-# Colores y etiquetas por tipo de entidad
 ESTILOS = {
     "olimpo":      ("#1a5fb4", "OLI"),
     "oscura":      ("#5e35b1", "OSC"),
@@ -326,7 +323,16 @@ ESTILOS = {
 }
 
 
-def vtn_partida(padre, jugador1, jugador2):
+def cargar_imagen_faccion(faccion, tipo):
+    try:
+        ruta = f"Imagenes/facciones/{faccion}/{tipo}.png"
+        img = Image.open(ruta).resize((CELL - 6, CELL - 6))
+        return ImageTk.PhotoImage(img)
+    except Exception:
+        return None
+
+
+def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     partida = Partida(jugador1, jugador2)
 
     win = tk.Toplevel(padre)
@@ -336,7 +342,7 @@ def vtn_partida(padre, jugador1, jugador2):
     ronda_actual = [None]
     tipo_seleccionado = [None]
     turno = [1]
-
+    imagenes_cache = {}
 
     frame_info = tk.Frame(win, bg="#1e1e2e", width=210, padx=10, pady=10)
     frame_info.grid(row=0, column=0, sticky="ns")
@@ -345,22 +351,46 @@ def vtn_partida(padre, jugador1, jugador2):
     canvas = tk.Canvas(win, width=10 * CELL, height=10 * CELL)
     canvas.grid(row=0, column=1)
 
+    #  Fondo con facción de cada jugador ─
 
-    for i in range(10):
-        for j in range(10):
-            if j <= 4:
-                color = "#6aaa3c" if (i + j) % 2 == 0 else "#5e9c33"
-            else:
-                color = "#8b7355" if (i + j) % 2 == 0 else "#7d6648"
-            canvas.create_rectangle(j * CELL, i * CELL,
-                                    (j + 1) * CELL, (i + 1) * CELL,
-                                    fill=color, outline="", tags="fondo")
+    def dibujar_fondo():
+        canvas.delete("fondo")
+        if partida.defensor_actual is jugador1:
+            f_atk = FACCIONES[faccion2]
+            f_def = FACCIONES[faccion1]
+        else:
+            f_atk = FACCIONES[faccion1]
+            f_def = FACCIONES[faccion2]
 
-    # Resaltar casilla de la base
-    canvas.create_rectangle(9 * CELL + 3, 4 * CELL + 3,
-                            10 * CELL - 3, 5 * CELL - 3,
-                            fill="#f6d32d", outline="#e5a50a", width=2, tags="fondo")
+        for i in range(10):
+            for j in range(10):
+                if j <= 4:
+                    color = f_atk["color_a"] if (i + j) % 2 == 0 else f_atk["color_b"]
+                else:
+                    color = f_def["color_a"] if (i + j) % 2 == 0 else f_def["color_b"]
+                canvas.create_rectangle(j * CELL, i * CELL,
+                                        (j + 1) * CELL, (i + 1) * CELL,
+                                        fill=color, outline="", tags="fondo")
 
+        canvas.create_rectangle(9 * CELL + 3, 4 * CELL + 3,
+                                10 * CELL - 3, 5 * CELL - 3,
+                                fill="#f6d32d", outline="#e5a50a", width=2, tags="fondo")
+
+    #  Capa 1: grilla durante colocación ─
+
+    def mostrar_grilla():
+        canvas.delete("grilla")
+        for i in range(11):
+            canvas.create_line(0, i * CELL, 10 * CELL, i * CELL,
+                               fill="white", width=1, tags="grilla")
+        for j in range(11):
+            canvas.create_line(j * CELL, 0, j * CELL, 10 * CELL,
+                               fill="white", width=1, tags="grilla")
+
+    def ocultar_grilla():
+        canvas.delete("grilla")
+
+    #  Panel de info ─
 
     s = {"bg": "#1e1e2e", "fg": "white"}
 
@@ -385,10 +415,19 @@ def vtn_partida(padre, jugador1, jugador2):
     btn_accion = tk.Button(frame_info, font=("Arial", 10), width=18)
     btn_accion.pack(pady=5)
 
+    #  Capa 2: dibujar entidades ─
 
     def dibujar_entidades():
         canvas.delete("entidad")
         ronda = ronda_actual[0]
+
+        if partida.defensor_actual is jugador1:
+            faccion_def = faccion1
+            faccion_atk = faccion2
+        else:
+            faccion_def = faccion2
+            faccion_atk = faccion1
+
         for i in range(10):
             for j in range(10):
                 celda = ronda.mapa.obtener(i, j)
@@ -406,36 +445,42 @@ def vtn_partida(padre, jugador1, jugador2):
                                             fill="#26a269", outline="", tags="entidad")
                     canvas.create_text(cx, cy + 4, text=f"BASE\n{celda.vida}",
                                        fill="#1a1a1a", font=("Arial", 7, "bold"), tags="entidad")
+                    continue
 
-                elif isinstance(celda, Torre):
+                if isinstance(celda, (Torre, Muro)):
+                    faccion_entidad = faccion_def
+                else:
+                    faccion_entidad = faccion_atk
+
+                clave = f"{faccion_entidad}_{celda.tipo}"
+                if clave not in imagenes_cache:
+                    imagenes_cache[clave] = cargar_imagen_faccion(faccion_entidad, celda.tipo)
+
+                img = imagenes_cache[clave]
+                if img:
+                    canvas.create_image(cx, cy, image=img, tags="entidad")
+                else:
                     color, letra = ESTILOS[celda.tipo]
-                    canvas.create_rectangle(x1, y1, x2, y2, fill=color,
-                                            outline="white", width=1, tags="entidad")
+                    if isinstance(celda, Unidad):
+                        canvas.create_oval(x1, y1, x2, y2, fill=color,
+                                           outline="white", width=1, tags="entidad")
+                    else:
+                        canvas.create_rectangle(x1, y1, x2, y2, fill=color,
+                                                outline="white", width=1, tags="entidad")
                     canvas.create_text(cx, cy, text=letra, fill="white",
                                        font=("Arial", 8, "bold"), tags="entidad")
 
-                elif isinstance(celda, Muro):
-                    color, letra = ESTILOS[celda.tipo]
-                    canvas.create_rectangle(x1, y1, x2, y2, fill=color,
-                                            outline="white", width=1, tags="entidad")
-                    canvas.create_text(cx, cy, text=letra, fill="white",
-                                       font=("Arial", 8, "bold"), tags="entidad")
-
-                elif isinstance(celda, Unidad):
-                    color, letra = ESTILOS[celda.tipo]
-                    canvas.create_oval(x1, y1, x2, y2, fill=color,
-                                       outline="white", width=1, tags="entidad")
-                    canvas.create_text(cx, cy, text=letra, fill="white",
-                                       font=("Arial", 8, "bold"), tags="entidad")
-
+    #  Iniciar ronda ─
 
     def iniciar_ronda():
         ronda_actual[0] = partida.iniciar_ronda()
         tipo_seleccionado[0] = None
         turno[0] = 1
+        dibujar_fondo()
         dibujar_entidades()
         mostrar_fase_defensor()
 
+    #  Fase defensor ─
 
     def mostrar_fase_defensor():
         ronda = ronda_actual[0]
@@ -443,13 +488,13 @@ def vtn_partida(padre, jugador1, jugador2):
         lbl_fase.config(text=f"DEFENSOR: {ronda.jugador_defensor.username}")
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         lbl_log.config(text="")
+        mostrar_grilla()
 
         for w in frame_tipos.winfo_children():
             w.destroy()
 
-        opciones = [("olimpo", 150), ("oscura", 70), ("volcan", 200),
-                    ("madera", 30), ("metal", 80)]
-        for tipo, costo in opciones:
+        for tipo, costo in [("olimpo", 150), ("oscura", 70), ("volcan", 200),
+                             ("madera", 30), ("metal", 80)]:
             color = ESTILOS[tipo][0]
             tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
                       font=("Arial", 8), bg=color, fg="black",
@@ -475,6 +520,7 @@ def vtn_partida(padre, jugador1, jugador2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         dibujar_entidades()
 
+    #  Fase atacante ─
 
     def mostrar_fase_atacante():
         ronda = ronda_actual[0]
@@ -482,13 +528,13 @@ def vtn_partida(padre, jugador1, jugador2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_atacante}")
         lbl_log.config(text="")
         tipo_seleccionado[0] = None
+        mostrar_grilla()
 
         for w in frame_tipos.winfo_children():
             w.destroy()
 
-        opciones = [("flechas", 40), ("ninja", 90), ("reina_hielo", 120),
-                    ("rey_barbaro", 160), ("fireball", 170)]
-        for tipo, costo in opciones:
+        for tipo, costo in [("flechas", 40), ("ninja", 90), ("reina_hielo", 120),
+                             ("rey_barbaro", 160), ("fireball", 170)]:
             color = ESTILOS[tipo][0]
             tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
                       font=("Arial", 8), bg=color, fg="black",
@@ -511,9 +557,11 @@ def vtn_partida(padre, jugador1, jugador2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_atacante}")
         dibujar_entidades()
 
+    #  Fase combate 
 
     def iniciar_combate():
         canvas.unbind("<Button-1>")
+        ocultar_grilla()
         for w in frame_tipos.winfo_children():
             w.destroy()
         lbl_fase.config(text="COMBATE")
@@ -549,9 +597,7 @@ def vtn_partida(padre, jugador1, jugador2):
     def seleccionar(tipo):
         tipo_seleccionado[0] = tipo
         lbl_log.config(text=f"Seleccionado: {tipo}")
-
     iniciar_ronda()
-
 
 
 vtn_principal()
