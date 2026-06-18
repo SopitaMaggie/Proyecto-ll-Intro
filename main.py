@@ -6,7 +6,6 @@ from juego import Partida, BaseCentral
 from defensor import Torre, Muro
 from atacante import Unidad
 
-# FACCIONES 
 FACCIONES = {
     "olimpo": {
         "nombre": "Olimpo",
@@ -30,34 +29,19 @@ FACCIONES = {
         "color_preview": "#b5381d",
     }
 }
-
-
-#VENTANA PRINCIPAL 
-
-def vtn_principal():
+#ventada de inicio
+def vtn_principal():  # vtn= es ventana
     vtn = tk.Tk()
     vtn.title("Defensa y Asalto")
     vtn.geometry("1300x800")
     vtn.resizable(False, False)
 
-    img_fondo = ImageTk.PhotoImage(
-        Image.open("Imagenes/inicio.png").resize((1300, 800))
-    )
-    img_jugar = ImageTk.PhotoImage(
-        Image.open("Imagenes/btn_jugar.png").resize((600, 350))
-    )
-    img_registrar = ImageTk.PhotoImage(
-        Image.open("Imagenes/btn_login.png").resize((600, 350))
-    )
-    img_ranking = ImageTk.PhotoImage(
-        Image.open("Imagenes/btn_ranking.png").resize((600, 350))
-    )
-    img_info = ImageTk.PhotoImage(
-        Image.open("Imagenes/btn_info.png").resize((600, 350))
-    )
-    img_salir = ImageTk.PhotoImage(
-        Image.open("Imagenes/btn_salir.png").resize((600, 350))
-    )
+    img_fondo = ImageTk.PhotoImage(Image.open("Imagenes/inicio.png").resize((1300, 800)))
+    img_jugar = ImageTk.PhotoImage(Image.open("Imagenes/btn_jugar.png").resize((600, 350)))
+    img_registrar = ImageTk.PhotoImage(Image.open("Imagenes/btn_login.png").resize((600, 350)) )
+    img_ranking = ImageTk.PhotoImage(Image.open("Imagenes/btn_ranking.png").resize((600, 350)))
+    img_info = ImageTk.PhotoImage(Image.open("Imagenes/btn_info.png").resize((600, 350)) )
+    img_salir = ImageTk.PhotoImage( Image.open("Imagenes/btn_salir.png").resize((600, 350)))
 
     canvas = tk.Canvas(vtn, width=1300, height=800, highlightthickness=0)
     canvas.pack(fill="both", expand=True)
@@ -73,7 +57,7 @@ def vtn_principal():
     canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO * 3, image=img_info)
     canvas.create_image(X_BOTONES, Y_INICIAL + ESPACIO * 4, image=img_salir)
 
-    def Zclick(x1, y1, x2, y2, funcion): #zona donde hace click
+    def Zclick(x1, y1, x2, y2, funcion):  # zona donde se hace click
         zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
         canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
         canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
@@ -85,7 +69,6 @@ def vtn_principal():
     Zclick(430, 495, 910, 565, lambda: vtn_ranking(vtn))
     Zclick(430, 580, 910, 650, lambda: vtn_informacion(vtn))
     Zclick(430, 665, 910, 735, vtn.destroy)
-
     canvas.img_fondo = img_fondo
     canvas.img_jugar = img_jugar
     canvas.img_registrar = img_registrar
@@ -94,86 +77,271 @@ def vtn_principal():
     canvas.img_salir = img_salir
     vtn.mainloop()
 
-# REGISTRARSE 
+# Resgistrarse
 def vtn_registrarse(principal):
     win = tk.Toplevel(principal)
     win.title("Registrarse")
-    win.geometry("350x300")
+    win.geometry("1300x800")
     win.resizable(False, False)
+    img_fondo = ImageTk.PhotoImage(Image.open("Imagenes/fondo_registrar.png").resize((1300, 800)))
+    img_btn_registrar = ImageTk.PhotoImage(Image.open("Imagenes/registrar.png").resize((800, 400)))
+    img_btn_volver = ImageTk.PhotoImage(Image.open("Imagenes/volver.png").resize((400, 300)))
 
-    tk.Label(win, text="REGISTRARSE", font=("Arial", 16, "bold")).pack(pady=20)
+    canvas = tk.Canvas(win, width=1300, height=800, highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(0, 0, image=img_fondo, anchor="nw")
 
-    tk.Label(win, text="Username:", font=("Arial", 11)).pack()
-    entry_user = tk.Entry(win, font=("Arial", 11))
-    entry_user.pack(pady=5)
+    entry_user = tk.Entry(
+        win,
+        font=("Arial", 18),
+        bg="#020b1d",
+        fg="white",
+        insertbackground="white",
+        relief="flat",
+        bd=0,
+        highlightthickness=0
+    )
+    canvas.create_window(
+        680,
+        310,
+        width=500,
+        height=28,
+        window=entry_user
+    )
 
-    tk.Label(win, text="Password:", font=("Arial", 11)).pack()
-    entry_pass = tk.Entry(win, font=("Arial", 11), show="*")
-    entry_pass.pack(pady=5)
+    # Contraseña
+    entry_pass = tk.Entry(
+        win,
+        font=("Arial", 18),
+        bg="#020b1d",
+        fg="white",
+        insertbackground="white",
+        relief="flat",
+        bd=0,
+        highlightthickness=0,
+        show="*"
+    )
+    canvas.create_window(
+        680,
+        410,
+        width=500,
+        height=28,
+        window=entry_pass
+    )
 
-    tk.Label(win, text="Nombre (opcional):", font=("Arial", 11)).pack()
-    entry_nombre = tk.Entry(win, font=("Arial", 11))
-    entry_nombre.pack(pady=5)
+    # Nombre opcional
+    entry_nombre = tk.Entry(
+        win,
+        font=("Arial", 18),
+        bg="#020b1d",
+        fg="white",
+        insertbackground="white",
+        relief="flat",
+        bd=0,
+        highlightthickness=0
+    )
+    canvas.create_window(
+        680,
+        510,
+        width=500,
+        height=28,
+        window=entry_nombre
+    )
+
+    canvas.create_image(650, 620, image=img_btn_registrar)
+    canvas.create_image(650, 730, image=img_btn_volver)
 
     def registrar():
         username = entry_user.get().strip()
         password = entry_pass.get().strip()
         nombre = entry_nombre.get().strip()
-        if not username or not password:
-            messagebox.showerror("Error", "Username y password son obligatorios.", parent=win)
+        if username == "" or password == "":
+            messagebox.showwarning(
+                "Campos vacíos",
+                "Usuario y contraseña son obligatorios.",
+                parent=win
+            )
             return
+        if nombre == "":
+            nombre = username
         jugador, msg = registrar_jugador(username, password, nombre)
         if jugador:
+            messagebox.showinfo(
+                "Registro exitoso",
+                "Usuario registrado correctamente.\nYa puedes iniciar sesión.",
+                parent=win
+            )
             win.destroy()
-            vtn_registro_exitoso(principal)
+            vtn_iniciar_sesion(principal)
         else:
-            messagebox.showerror("Error", msg, parent=win)
+            messagebox.showerror(
+                "Error",
+                msg,
+                parent=win
+            )
+    def volver_menu():
+        win.destroy()
+    def Zclick(x1, y1, x2, y2, funcion):
+        zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
+        canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
+        canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
+        canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
+    Zclick(500, 575, 800, 665, registrar)
+    Zclick(540, 700, 760, 760, volver_menu)
+    entry_user.bind("<Return>", lambda e: entry_pass.focus())
+    entry_pass.bind("<Return>", lambda e: entry_nombre.focus())
+    entry_nombre.bind("<Return>", lambda e: registrar())
+    entry_user.focus()
+    win.img_fondo = img_fondo
+    win.img_btn_registrar = img_btn_registrar
+    win.img_btn_volver = img_btn_volver
 
-    tk.Button(win, text="Registrarse", width=15, font=("Arial", 11), command=registrar).pack(pady=15)
-
-
-def vtn_registro_exitoso(principal):
-    win = tk.Toplevel(principal)
-    win.title("Registro exitoso")
-    win.geometry("300x200")
-    win.resizable(False, False)
-
-    tk.Label(win, text="¡Registro exitoso!", font=("Arial", 14, "bold")).pack(pady=40)
-    tk.Label(win, text="Ya puedes iniciar sesión.", font=("Arial", 11)).pack()
-    tk.Button(win, text="Volver al menú", font=("Arial", 11), command=win.destroy).pack(pady=20)
-
-# INICIAR SESIÓN 
+# inicio sesion
 def vtn_iniciar_sesion(principal):
     win = tk.Toplevel(principal)
     win.title("Iniciar sesión")
-    win.geometry("350x250")
+    win.geometry("1300x800")
     win.resizable(False, False)
 
-    tk.Label(win, text="INICIAR SESIÓN", font=("Arial", 16, "bold")).pack(pady=20)
-
-    tk.Label(win, text="Username:", font=("Arial", 11)).pack()
-    entry_user = tk.Entry(win, font=("Arial", 11))
-    entry_user.pack(pady=5)
-
-    tk.Label(win, text="Password:", font=("Arial", 11)).pack()
-    entry_pass = tk.Entry(win, font=("Arial", 11), show="*")
-    entry_pass.pack(pady=5)
-
+    img_fondo = ImageTk.PhotoImage(Image.open("Imagenes/jugar_fondo.png").resize((1300, 800)))
+    img_caja_usuario = ImageTk.PhotoImage(Image.open("Imagenes/caja_usuario.png").resize((700, 300)))
+    img_caja_password = ImageTk.PhotoImage(Image.open("Imagenes/caja_password.png").resize((700, 300)) )
+    img_btn_inicio = ImageTk.PhotoImage(Image.open("Imagenes/btn_inicio.png").resize((600, 400)))
+    img_btn_volver = ImageTk.PhotoImage(Image.open("Imagenes/volver.png").resize((400, 300)))
+    img_btn_registrar = ImageTk.PhotoImage(Image.open("Imagenes/registrar.png").resize((400, 250)))
+    canvas = tk.Canvas(
+        win,
+        width=1300,
+        height=800,
+        highlightthickness=0
+    )
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(
+        0,
+        0,
+        image=img_fondo,
+        anchor="nw"
+    )
+    canvas.create_image(
+        780,
+        660,
+        image=img_btn_registrar)
+    canvas.create_image(
+        500,
+        340,
+        image=img_caja_usuario)
+    canvas.create_image(
+        500,
+        435,
+        image=img_caja_password)
+    canvas.create_image(
+        650,
+        555,
+        image=img_btn_inicio)
+    canvas.create_image(
+        650,
+        730,
+        image=img_btn_volver)
+    entry_user = tk.Entry(
+        win,
+        font=("Arial", 18),
+        bg="#001122",
+        fg="white",
+        insertbackground="white",
+        relief="flat",
+        bd=0,
+        highlightthickness=0
+    )
+    canvas.create_window(
+        540,  # mover un poco a la derecha
+        325,
+        width=320,  # más largo
+        height=28,
+        window=entry_user
+    )
+    entry_pass = tk.Entry(
+        win,
+        font=("Arial", 18),
+        bg="#001122",
+        fg="white",
+        insertbackground="white",
+        relief="flat",
+        bd=0,
+        highlightthickness=0,
+        show="*"
+    )
+    canvas.create_window(
+        540,  # misma posición horizontal
+        420,
+        width=320,  # más largo
+        height=28,
+        window=entry_pass
+    )
     def login():
         username = entry_user.get().strip()
         password = entry_pass.get().strip()
+
+        if username == "" or password == "":
+            messagebox.showwarning(
+                "Campos vacíos",
+                "Debes escribir usuario y contraseña.",
+                parent=win
+            )
+            return
         jugador, msg = iniciar_sesion(username, password)
         if jugador:
             win.destroy()
             vtn_menu_juego(principal, jugador)
         else:
-            messagebox.showerror("Error", msg, parent=win)
+            messagebox.showerror(
+                "Usuario no encontrado",
+                "No existe este usuario o la contraseña es incorrecta.\n\nRegistra un usuario nuevo o revisa los datos.",
+                parent=win
+            )
+    def abrir_registro():
+        win.destroy()
+        vtn_registrarse(principal)
+    def volver_menu():
+        win.destroy()
+    def Zclick(x1, y1, x2, y2, funcion):
+        zona = canvas.create_rectangle(
+            x1,
+            y1,
+            x2,
+            y2,
+            outline="",
+            fill=""
+        )
+        canvas.tag_bind(
+            zona,
+            "<Button-1>",
+            lambda e: funcion()
+        )
+        canvas.tag_bind(
+            zona,
+            "<Enter>",
+            lambda e: canvas.config(cursor="hand2")
+        )
+        canvas.tag_bind(
+            zona,
+            "<Leave>",
+            lambda e: canvas.config(cursor="")
+        )
+    Zclick(375, 505, 925, 600, login)
+    Zclick(370, 645, 930, 705, abrir_registro)
+    Zclick(540, 700, 760, 760, volver_menu)
+    Zclick(650,605,875,675,abrir_registro)
+    entry_user.bind("<Return>", lambda e: entry_pass.focus())
+    entry_pass.bind("<Return>", lambda e: login())
+    entry_user.focus()
+    win.img_fondo = img_fondo
+    win.img_caja_usuario = img_caja_usuario
+    win.img_caja_password = img_caja_password
+    win.img_btn_inicio = img_btn_inicio
+    win.img_btn_volver = img_btn_volver
+    win.img_btn_registrar = img_btn_registrar
 
-    tk.Button(win, text="Iniciar sesión", width=15, font=("Arial", 11), command=login).pack(pady=15)
-
-
-# MENÚ DE JUEGO 
-
+# menu de juego
 def vtn_menu_juego(principal, jugador):
     win = tk.Toplevel(principal)
     win.title("Menú de juego")
@@ -190,8 +358,6 @@ def vtn_menu_juego(principal, jugador):
     tk.Button(win, text="Cerrar sesión", width=20, font=("Arial", 12),
               command=win.destroy).pack(pady=8)
 
-
-# SELECCIÓN DE FACCIÓN 
 
 def vtn_facciones(padre, titulo, on_select):
     win = tk.Toplevel(padre)
@@ -226,8 +392,7 @@ def vtn_facciones(padre, titulo, on_select):
                   command=lambda k=key: seleccionar(k)).pack(pady=8)
 
 
-# SEGUNDA SESIÓN 
-
+# segunda sesion
 def vtn_segunda_sesion(menu_win, jugador1, faccion1):
     win = tk.Toplevel(menu_win)
     win.title("Segundo jugador")
@@ -257,7 +422,8 @@ def vtn_segunda_sesion(menu_win, jugador1, faccion1):
 
     tk.Button(win, text="Iniciar sesión", width=15, font=("Arial", 11), command=login_j2).pack(pady=15)
 
-# RANKING 
+
+# ranking
 def vtn_ranking(padre):
     win = tk.Toplevel(padre)
     win.title("Ranking")
@@ -282,8 +448,7 @@ def vtn_ranking(padre):
     tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
 
 
-# INFORMACIÓN 
-
+# informacion
 def vtn_informacion(padre):
     win = tk.Toplevel(padre)
     win.title("Información")
@@ -305,21 +470,19 @@ def vtn_informacion(padre):
     tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
 
 
-#PARTIDA 
-
-CELL = 52
-
+# partida
+CELL = 52  # cantidad de pixeles por celda
 ESTILOS = {
-    "olimpo":      ("#1a5fb4", "OLI"),
-    "oscura":      ("#5e35b1", "OSC"),
-    "volcan":      ("#b5381d", "VOL"),
-    "madera":      ("#a0785a", "MUR"),
-    "metal":       ("#5e6264", "MET"),
-    "flechas":     ("#e07b00", "FLE"),
-    "ninja":       ("#2d3436", "NIN"),
+    "olimpo": ("#1a5fb4", "OLI"),
+    "oscura": ("#5e35b1", "OSC"),
+    "volcan": ("#b5381d", "VOL"),
+    "madera": ("#a0785a", "MUR"),
+    "metal": ("#5e6264", "MET"),
+    "flechas": ("#e07b00", "FLE"),
+    "ninja": ("#2d3436", "NIN"),
     "reina_hielo": ("#4fc3f7", "REI"),
     "rey_barbaro": ("#7b3f00", "REY"),
-    "fireball":    ("#e01b24", "FIR"),
+    "fireball": ("#e01b24", "FIR"),
 }
 
 
@@ -351,8 +514,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     canvas = tk.Canvas(win, width=10 * CELL, height=10 * CELL)
     canvas.grid(row=0, column=1)
 
-    #  Fondo con facción de cada jugador ─
-
+    #  Fondo con facción de cada jugador
     def dibujar_fondo():
         canvas.delete("fondo")
         if partida.defensor_actual is jugador1:
@@ -376,8 +538,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
                                 10 * CELL - 3, 5 * CELL - 3,
                                 fill="#f6d32d", outline="#e5a50a", width=2, tags="fondo")
 
-    #  Capa 1: grilla durante colocación ─
-
+    #  Capa 1: grilla durante colocación
     def mostrar_grilla():
         canvas.delete("grilla")
         for i in range(11):
@@ -390,8 +551,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     def ocultar_grilla():
         canvas.delete("grilla")
 
-    #  Panel de info ─
-
+    #  Panel de info
     s = {"bg": "#1e1e2e", "fg": "white"}
 
     lbl_ronda = tk.Label(frame_info, text="", font=("Arial", 13, "bold"), **s)
@@ -415,8 +575,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     btn_accion = tk.Button(frame_info, font=("Arial", 10), width=18)
     btn_accion.pack(pady=5)
 
-    #  Capa 2: dibujar entidades ─
-
+    #  Capa 2: dibujar entidades
     def dibujar_entidades():
         canvas.delete("entidad")
         ronda = ronda_actual[0]
@@ -470,8 +629,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
                     canvas.create_text(cx, cy, text=letra, fill="white",
                                        font=("Arial", 8, "bold"), tags="entidad")
 
-    #  Iniciar ronda ─
-
+    #  Iniciar ronda
     def iniciar_ronda():
         ronda_actual[0] = partida.iniciar_ronda()
         tipo_seleccionado[0] = None
@@ -480,8 +638,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         dibujar_entidades()
         mostrar_fase_defensor()
 
-    #  Fase defensor ─
-
+    #  Fase defensor
     def mostrar_fase_defensor():
         ronda = ronda_actual[0]
         lbl_ronda.config(text=f"Ronda {partida.ronda_actual}")
@@ -494,7 +651,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
             w.destroy()
 
         for tipo, costo in [("olimpo", 150), ("oscura", 70), ("volcan", 200),
-                             ("madera", 30), ("metal", 80)]:
+                            ("madera", 30), ("metal", 80)]:
             color = ESTILOS[tipo][0]
             tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
                       font=("Arial", 8), bg=color, fg="black",
@@ -534,7 +691,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
             w.destroy()
 
         for tipo, costo in [("flechas", 40), ("ninja", 90), ("reina_hielo", 120),
-                             ("rey_barbaro", 160), ("fireball", 170)]:
+                            ("rey_barbaro", 160), ("fireball", 170)]:
             color = ESTILOS[tipo][0]
             tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
                       font=("Arial", 8), bg=color, fg="black",
@@ -557,8 +714,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_atacante}")
         dibujar_entidades()
 
-    #  Fase combate 
-
+    #  Fase combate
     def iniciar_combate():
         canvas.unbind("<Button-1>")
         ocultar_grilla()
@@ -597,7 +753,6 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     def seleccionar(tipo):
         tipo_seleccionado[0] = tipo
         lbl_log.config(text=f"Seleccionado: {tipo}")
+
     iniciar_ronda()
-
-
 vtn_principal()
