@@ -427,47 +427,78 @@ def vtn_segunda_sesion(menu_win, jugador1, faccion1):
 def vtn_ranking(padre):
     win = tk.Toplevel(padre)
     win.title("Ranking")
-    win.geometry("350x400")
+    win.geometry("1000x800")
     win.resizable(False, False)
 
-    tk.Label(win, text="RANKING", font=("Arial", 16, "bold")).pack(pady=15)
+    img_fondo = ImageTk.PhotoImage(Image.open("Imagenes/fondo_rancking.png").resize((1000, 800)))
+    img_btn_volver = ImageTk.PhotoImage(Image.open("Imagenes/volver.png").resize((400, 300)))
+    canvas = tk.Canvas(win, width=1000, height=800, highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(0, 0, image=img_fondo, anchor="nw")
 
     ranking_def, ranking_atk = obtener_ranking()
 
-    tk.Label(win, text="TOP 5 DEFENSORES", font=("Arial", 12, "bold")).pack()
+    y = 240
     for i, j in enumerate(ranking_def, 1):
-        tk.Label(win, text=f"{i}. {j.username} - {j.victorias_defensor} victorias",
-                 font=("Arial", 11)).pack()
+        canvas.create_text(
+            300, y,
+            text=f"{i}. {j.username}  -  {j.victorias_defensor} victorias",
+            fill="white",
+            font=("Copperplate", 20, "bold")
+        )
+        y += 45
 
-    tk.Label(win, text="").pack()
-    tk.Label(win, text="TOP 5 ATACANTES", font=("Arial", 12, "bold")).pack()
+    y = 540
     for i, j in enumerate(ranking_atk, 1):
-        tk.Label(win, text=f"{i}. {j.username} - {j.victorias_atacante} victorias",
-                 font=("Arial", 11)).pack()
+        canvas.create_text(
+            300, y,
+            text=f"{i}. {j.username}  -  {j.victorias_atacante} victorias",
+            fill="white",
+            font=("Copperplate", 20, "bold")
+        )
+        y += 45
 
-    tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
-
+    canvas.create_image(
+        500, 780,
+        image=img_btn_volver
+    )
+    def volver():
+        win.destroy()
+    def Zclick(x1, y1, x2, y2, funcion):
+        zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
+        canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
+        canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
+        canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
+    Zclick(390, 710,610, 800,volver)
+    win.img_fondo = img_fondo
+    win.img_btn_volver = img_btn_volver
 
 # informacion
 def vtn_informacion(padre):
     win = tk.Toplevel(padre)
     win.title("Información")
-    win.geometry("400x350")
+    win.geometry("1000x800")
     win.resizable(False, False)
 
-    tk.Label(win, text="INFORMACIÓN", font=("Arial", 16, "bold")).pack(pady=15)
+    img_fondo = ImageTk.PhotoImage(
+        Image.open("Imagenes/informacion.png").resize((1000, 800)))
+    img_btn_volver = ImageTk.PhotoImage(
+        Image.open("Imagenes/volver.png").resize((400, 300)))
+    canvas = tk.Canvas(win, width=1300, height=800, highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(0, 0, image=img_fondo, anchor="nw")
+    canvas.create_image(650,730,image=img_btn_volver)
+    def volver():
+        win.destroy()
+    def Zclick(x1, y1, x2, y2, funcion):
+        zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
+        canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
+        canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
+        canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
 
-    info = (
-        "Defensa y Asalto es un juego de estrategia\n"
-        "para 2 jugadores.\n\n"
-        "El defensor coloca torres y muros para\n"
-        "proteger su base central.\n\n"
-        "El atacante coloca unidades para destruir\n"
-        "la base del defensor.\n\n"
-        "Gana el primero en ganar 3 rondas."
-    )
-    tk.Label(win, text=info, font=("Arial", 11), justify="center").pack(pady=10)
-    tk.Button(win, text="Cerrar", font=("Arial", 11), command=win.destroy).pack(pady=15)
+    Zclick(540,700,760,760,volver)
+    win.img_fondo = img_fondo
+    win.img_btn_volver = img_btn_volver
 
 
 # partida
@@ -646,19 +677,50 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         lbl_log.config(text="")
         mostrar_grilla()
-
         for w in frame_tipos.winfo_children():
             w.destroy()
 
-        for tipo, costo in [("olimpo", 150), ("oscura", 70), ("volcan", 200),
-                            ("madera", 30), ("metal", 80)]:
-            color = ESTILOS[tipo][0]
-            tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
-                      font=("Arial", 8), bg=color, fg="black",
-                      command=lambda t=tipo: seleccionar(t)).pack(pady=2)
+        tk.Label(frame_tipos, text="TORRES", bg="#1e1e2e", fg="#f6d32d",
+                 font=("Arial", 9, "bold")).pack(pady=(4, 2))
 
-        btn_accion.config(text="Terminar colocación", bg="#e0c800", fg="black",
-                          command=lambda: mostrar_fase_atacante())
+        for tipo, datos in Torre.TIPOS.items():
+            costo = datos["costo"]
+            nombre = datos["nombre"]
+            color = ESTILOS[tipo][0]
+            tk.Button(
+                frame_tipos,
+                text=f"{nombre} (${costo})",
+                width=22,
+                font=("Arial", 8),
+                bg=color,
+                fg="black",
+                command=lambda t=tipo: seleccionar(t)
+            ).pack(pady=2)
+        tk.Label(frame_tipos, text="MUROS", bg="#1e1e2e", fg="#f6d32d",
+                 font=("Arial", 9, "bold")).pack(pady=(8, 2))
+
+        for tipo, datos in Muro.TIPOS.items():
+            costo = datos["costo"]
+            nombre = datos["nombre"]
+            color = ESTILOS[tipo][0]
+
+            tk.Button(
+                frame_tipos,
+                text=f"{nombre} (${costo})",
+                width=22,
+                font=("Arial", 8),
+                bg=color,
+                fg="black",
+                command=lambda t=tipo: seleccionar(t)
+            ).pack(pady=2)
+
+        btn_accion.config(
+            text="Terminar colocación",
+            bg="#e0c800",
+            fg="black",
+            state="normal",
+            command=lambda: mostrar_fase_atacante()
+        )
         canvas.bind("<Button-1>", clic_defensor)
 
     def clic_defensor(event):
@@ -677,8 +739,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         dibujar_entidades()
 
-    #  Fase atacante ─
-
+    #  Fase atacante 
     def mostrar_fase_atacante():
         ronda = ronda_actual[0]
         lbl_fase.config(text=f"ATACANTE: {ronda.jugador_atacante.username}")
@@ -690,15 +751,32 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         for w in frame_tipos.winfo_children():
             w.destroy()
 
-        for tipo, costo in [("flechas", 40), ("ninja", 90), ("reina_hielo", 120),
-                            ("rey_barbaro", 160), ("fireball", 170)]:
-            color = ESTILOS[tipo][0]
-            tk.Button(frame_tipos, text=f"{tipo} (${costo})", width=16,
-                      font=("Arial", 8), bg=color, fg="black",
-                      command=lambda t=tipo: seleccionar(t)).pack(pady=2)
+        tk.Label(frame_tipos, text="UNIDADES", bg="#1e1e2e", fg="#f6d32d",
+                 font=("Arial", 9, "bold")).pack(pady=(4, 2))
 
-        btn_accion.config(text="Iniciar combate", bg="#e01b24", fg="white",
-                          command=lambda: iniciar_combate())
+        for tipo, datos in Unidad.TIPOS.items():
+            costo = datos["costo"]
+            nombre = datos["nombre"]
+            color = ESTILOS[tipo][0]
+
+            tk.Button(
+                frame_tipos,
+                text=f"{nombre} (${costo})",
+                width=22,
+                font=("Arial", 8),
+                bg=color,
+                fg="black",
+                command=lambda t=tipo: seleccionar(t)
+            ).pack(pady=2)
+
+        btn_accion.config(
+            text="Iniciar combate",
+            bg="#e01b24",
+            fg="white",
+            state="normal",
+            command=lambda: iniciar_combate()
+        )
+
         canvas.bind("<Button-1>", clic_atacante)
 
     def clic_atacante(event):
@@ -752,7 +830,17 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
 
     def seleccionar(tipo):
         tipo_seleccionado[0] = tipo
-        lbl_log.config(text=f"Seleccionado: {tipo}")
+        if tipo in Torre.TIPOS:
+            nombre = Torre.TIPOS[tipo]["nombre"]
+            lbl_log.config(text=f"Torre seleccionada: {nombre}")
+        elif tipo in Muro.TIPOS:
+            nombre = Muro.TIPOS[tipo]["nombre"]
+            lbl_log.config(text=f"Muro seleccionado: {nombre}")
+        elif tipo in Unidad.TIPOS:
+            nombre = Unidad.TIPOS[tipo]["nombre"]
+            lbl_log.config(text=f"Unidad seleccionada: {nombre}")
+        else:
+            lbl_log.config(text=f"Seleccionado: {tipo}")
 
     iniciar_ronda()
 vtn_principal()
