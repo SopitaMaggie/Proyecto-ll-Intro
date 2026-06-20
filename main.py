@@ -629,7 +629,7 @@ def vtn_informacion(padre):
 
 
 # partida
-CELL = 70  # cantidad de pixeles por celda
+CELL = 85  # cantidad de pixeles por celda
 ESTILOS = {
     "olimpo": ("#1a5fb4", "OLI"),
     "oscura": ("#5e35b1", "OSC"),
@@ -656,22 +656,31 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     partida = Partida(jugador1, jugador2)
     win = tk.Toplevel(padre)
     win.title("Partida")
-    win.geometry("950x720")
+    win.geometry("120def c0x830")
     win.resizable(False, False)
     ronda_actual = [None]
     tipo_seleccionado = [None]
     turno = [1]
     imagenes_cache = {}
     img_base_verde = ImageTk.PhotoImage(
-        Image.open("Imagenes/base_verde.png").resize((CELL + 10, CELL + 10))
-    )
+        Image.open("Imagenes/base_verde.png").resize((CELL + 10, CELL + 10)) )
     img_base_morada = ImageTk.PhotoImage(
-        Image.open("Imagenes/base_morada.png").resize((CELL + 10, CELL + 10))
-    )
+        Image.open("Imagenes/base_morada.png").resize((CELL + 10, CELL + 10)))
     img_base_roja = ImageTk.PhotoImage(
-        Image.open("Imagenes/base_roja.png").resize((CELL + 10, CELL + 10))
-    )
-    frame_info = tk.Frame(win, bg="#1e1e2e", width=240, padx=10, pady=10)
+        Image.open("Imagenes/base_roja.png").resize((CELL + 10, CELL + 10)))
+    img_muro_madera = ImageTk.PhotoImage(
+        Image.open("Imagenes/muro_madera.png").resize((CELL - 8, CELL - 8)))
+    img_muro_metal = ImageTk.PhotoImage(
+        Image.open("Imagenes/muro_metal.png").resize((CELL - 8, CELL - 8)))
+
+    imagenes_tablero = {
+        "olimpo": img_base_verde,
+        "oscura": img_base_morada,
+        "volcan": img_base_roja,
+        "madera": img_muro_madera,
+        "metal": img_muro_metal,
+    }
+    frame_info = tk.Frame(win, bg="#1e1e2e", width=450, padx=10, pady=10)
     frame_info.grid(row=0, column=0, sticky="ns")
     frame_info.grid_propagate(False)
     canvas = tk.Canvas(
@@ -680,6 +689,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         height=10 * CELL,
         highlightthickness=0
     )
+    canvas.grid(row=0, column=1, padx=0, pady=0)
     canvas.grid(row=0, column=1)
     def dibujar_fondo():
         canvas.delete("fondo")
@@ -810,13 +820,22 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
                 if clave not in imagenes_cache:
                     imagenes_cache[clave] = cargar_imagen_faccion(faccion_entidad, celda.tipo)
                 img = imagenes_cache[clave]
-                if img:
+                if celda.tipo in imagenes_tablero:
+                    canvas.create_image(
+                        cx,
+                        cy,
+                        image=imagenes_tablero[celda.tipo],
+                        tags="entidad"
+                    )
+
+                elif img:
                     canvas.create_image(
                         cx,
                         cy,
                         image=img,
                         tags="entidad"
                     )
+
                 else:
                     color, letra = ESTILOS[celda.tipo]
                     if isinstance(celda, Unidad):
@@ -852,6 +871,8 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     win.img_base_verde = img_base_verde
     win.img_base_morada = img_base_morada
     win.img_base_roja = img_base_roja
+    win.img_muro_madera = img_muro_madera
+    win.img_muro_metal = img_muro_metal
     #  Iniciar ronda
     def iniciar_ronda():
         ronda_actual[0] = partida.iniciar_ronda()
@@ -869,42 +890,65 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         lbl_log.config(text="")
         mostrar_grilla()
+
         for w in frame_tipos.winfo_children():
             w.destroy()
 
-        tk.Label(frame_tipos, text="TORRES", bg="#1e1e2e", fg="#f6d32d",
-                 font=("Arial", 9, "bold")).pack(pady=(4, 2))
+        tarjetas = {}
 
-        for tipo, datos in Torre.TIPOS.items():
-            costo = datos["costo"]
-            nombre = datos["nombre"]
-            color = ESTILOS[tipo][0]
-            tk.Button(
-                frame_tipos,
-                text=f"{nombre} (${costo})",
-                width=22,
-                font=("Arial", 8),
-                bg=color,
-                fg="black",
-                command=lambda t=tipo: seleccionar(t)
-            ).pack(pady=2)
-        tk.Label(frame_tipos, text="MUROS", bg="#1e1e2e", fg="#f6d32d",
-                 font=("Arial", 9, "bold")).pack(pady=(8, 2))
+        def cargar_tarjeta(nombre, ancho=90, alto=160):
+            img = ImageTk.PhotoImage(
+                Image.open(f"Imagenes/{nombre}.png").resize((ancho, alto))
+            )
+            tarjetas[nombre] = img
+            return img
+        img_olimpo = cargar_tarjeta("tarjeta_olimpo")
+        img_oscura = cargar_tarjeta("tarjeta_oscura")
+        img_volcan = cargar_tarjeta("tarjeta_volcan")
+        img_madera = cargar_tarjeta("tarjeta_madera")
+        img_metal = cargar_tarjeta("tarjeta_metal")
 
-        for tipo, datos in Muro.TIPOS.items():
-            costo = datos["costo"]
-            nombre = datos["nombre"]
-            color = ESTILOS[tipo][0]
+        frame_torres = tk.Frame(frame_tipos, bg="#1e1e2e")
+        frame_torres.pack(pady=(5, 10))
 
-            tk.Button(
-                frame_tipos,
-                text=f"{nombre} (${costo})",
-                width=22,
-                font=("Arial", 8),
-                bg=color,
-                fg="black",
-                command=lambda t=tipo: seleccionar(t)
-            ).pack(pady=2)
+        tk.Label(
+            frame_torres,
+            text="TORRES",
+            bg="#1e1e2e",
+            fg="#f6d32d",
+            font=("Arial", 10, "bold")
+        ).pack()
+
+        fila_torres = tk.Frame(frame_torres, bg="#1e1e2e")
+        fila_torres.pack()
+
+        def crear_tarjeta(frame, imagen, tipo):
+            lbl = tk.Label(frame, image=imagen, bg="#1e1e2e", cursor="hand2")
+            lbl.pack(side="left", padx=1)
+
+            lbl.bind("<Button-1>", lambda e, t=tipo: seleccionar(t))
+            lbl.bind("<Enter>", lambda e: lbl.config(bg="#2e2e45"))
+            lbl.bind("<Leave>", lambda e: lbl.config(bg="#1e1e2e"))
+        crear_tarjeta(fila_torres, img_olimpo, "olimpo")
+        crear_tarjeta(fila_torres, img_oscura, "oscura")
+        crear_tarjeta(fila_torres, img_volcan, "volcan")
+
+        frame_muros = tk.Frame(frame_tipos, bg="#1e1e2e")
+        frame_muros.pack(pady=(5, 10))
+
+        tk.Label(
+            frame_muros,
+            text="MUROS",
+            bg="#1e1e2e",
+            fg="#f6d32d",
+            font=("Arial", 10, "bold")
+        ).pack()
+
+        fila_muros = tk.Frame(frame_muros, bg="#1e1e2e")
+        fila_muros.pack()
+
+        crear_tarjeta(fila_muros, img_madera, "madera")
+        crear_tarjeta(fila_muros, img_metal, "metal")
 
         btn_accion.config(
             text="Terminar colocación",
@@ -913,11 +957,15 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
             state="normal",
             command=lambda: mostrar_fase_atacante()
         )
-        canvas.bind("<Button-1>", clic_defensor)
+        canvas.tag_bind("fondo", "<Button-1>", clic_defensor)
+        canvas.tag_bind("grilla", "<Button-1>", clic_defensor)
+        frame_tipos.tarjetas = tarjetas
 
     def clic_defensor(event):
         col = event.x // CELL
         fila = event.y // CELL
+        if not (0 <= fila < 10 and 0 <= col < 10):
+            return
         tipo = tipo_seleccionado[0]
         if not tipo:
             lbl_log.config(text="Primero selecciona un tipo.")
@@ -969,8 +1017,8 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
             command=lambda: iniciar_combate()
         )
 
-        canvas.bind("<Button-1>", clic_atacante)
-
+        canvas.tag_bind("fondo", "<Button-1>", clic_atacante)
+        canvas.tag_bind("grilla", "<Button-1>", clic_atacante)
     def clic_atacante(event):
         col = event.x // CELL
         fila = event.y // CELL
