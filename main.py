@@ -1,14 +1,12 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
-
 from usuario import registrar_jugador, iniciar_sesion, obtener_ranking
 from juego import Partida, BaseCentral
 from defensor import Torre, Muro
 from atacante import Unidad
 
-
-FACCIONES = {
+FACCIONES = { # configura la parte visual
     "olimpo": {
         "nombre": "Olimpo",
         "descripcion": "Poder divino y rayos del cielo",
@@ -31,7 +29,42 @@ FACCIONES = {
         "color_preview": "#b5381d",
     }
 }
-
+def ventana_siguiente_ronda(padre, texto_boton, funcion_siguiente):
+    win = tk.Toplevel(padre)
+    win.title("Siguiente ronda")
+    centrar_ventana(win, 650, 420)
+    win.resizable(False, False)
+    canvas = tk.Canvas(win, width=650, height=420, bg="#1b102d", highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_text(
+        325, 110,
+        text="⚔ RONDA TERMINADA ⚔",
+        fill="#ffd700",
+        font=("Copperplate", 26, "bold")
+    )
+    canvas.create_text(
+        325, 210,
+        text="Escoge una jugada sabia.",
+        fill="white",
+        font=("Copperplate", 22, "bold")
+    )
+    boton = tk.Button(
+        win,
+        text=texto_boton,
+        font=("Copperplate", 14, "bold"),
+        bg="#f6d32d",
+        fg="#1e1e2e",
+        activebackground="#ffd966",
+        activeforeground="#000000",
+        relief="flat",
+        bd=0,
+        cursor="hand2",
+        command=lambda: cerrar_y_continuar()
+    )
+    canvas.create_window(325, 320, width=280, height=55, window=boton)
+    def cerrar_y_continuar():
+        win.destroy()
+        funcion_siguiente()
 
 def centrar_ventana(ventana, ancho, alto):
     pantalla_ancho = ventana.winfo_screenwidth()
@@ -72,7 +105,7 @@ def ventana_felicitaciones(padre, ganador):
 
     win.img_btn_volver = img_btn_volver
 
-def vtn_principal():
+def vtn_principal(): #vtn es ventana
     vtn = tk.Tk()
     vtn.title("Defensa y Asalto")
     centrar_ventana(vtn, 1300, 800)
@@ -105,7 +138,7 @@ def vtn_principal():
         canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
         canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
 
-    Zclick(430, 325, 910, 395, lambda: vtn_iniciar_sesion(vtn))
+    Zclick(430, 325, 910, 395, lambda: vtn_iniciar_sesion(vtn))  #zclick es zona donde se clik
     Zclick(430, 410, 910, 480, lambda: vtn_registrarse(vtn))
     Zclick(430, 495, 910, 565, lambda: vtn_ranking(vtn))
     Zclick(430, 580, 910, 650, lambda: vtn_informacion(vtn))
@@ -117,9 +150,7 @@ def vtn_principal():
     canvas.img_ranking = img_ranking
     canvas.img_info = img_info
     canvas.img_salir = img_salir
-
     vtn.mainloop()
-
 
 def vtn_registrarse(principal):
     win = tk.Toplevel(principal)
@@ -158,7 +189,6 @@ def vtn_registrarse(principal):
         if username == "" or password == "":
             messagebox.showwarning("Campos vacíos", "Usuario y contraseña son obligatorios.", parent=win)
             return
-
         if nombre == "":
             nombre = username
 
@@ -191,7 +221,6 @@ def vtn_registrarse(principal):
     win.img_fondo = img_fondo
     win.img_btn_registrar = img_btn_registrar
     win.img_btn_volver = img_btn_volver
-
 
 def vtn_iniciar_sesion(principal):
     win = tk.Toplevel(principal)
@@ -227,7 +256,6 @@ def vtn_iniciar_sesion(principal):
     def login():
         username = entry_user.get().strip()
         password = entry_pass.get().strip()
-
         if username == "" or password == "":
             messagebox.showwarning("Campos vacíos", "Debes escribir usuario y contraseña.", parent=win)
             return
@@ -241,14 +269,11 @@ def vtn_iniciar_sesion(principal):
             messagebox.showerror("Usuario no encontrado",
                                  "No existe este usuario o la contraseña es incorrecta.\n\nRegistra un usuario nuevo o revisa los datos.",
                                  parent=win)
-
     def abrir_registro():
         win.destroy()
         vtn_registrarse(principal)
-
     def volver_menu():
         win.destroy()
-
     def Zclick(x1, y1, x2, y2, funcion):
         zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
         canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
@@ -269,7 +294,6 @@ def vtn_iniciar_sesion(principal):
     win.img_btn_inicio = img_btn_inicio
     win.img_btn_volver = img_btn_volver
     win.img_btn_registrar = img_btn_registrar
-
 
 def vtn_menu_juego(principal, jugador):
     win = tk.Toplevel(principal)
@@ -300,28 +324,23 @@ def vtn_menu_juego(principal, jugador):
             f"FACCIÓN — {jugador.username}",
             lambda f1: vtn_segunda_sesion(principal, jugador, f1)
         )
-
     def ranking():
         vtn_ranking(win)
-
     def cerrar():
         win.destroy()
-
     def Zclick(x1, y1, x2, y2, funcion):
         zona = canvas.create_rectangle(x1, y1, x2, y2, outline="", fill="")
         canvas.tag_bind(zona, "<Button-1>", lambda e: funcion())
         canvas.tag_bind(zona, "<Enter>", lambda e: canvas.config(cursor="hand2"))
         canvas.tag_bind(zona, "<Leave>", lambda e: canvas.config(cursor=""))
-
-    Zclick(190, 220, 810, 340, nueva_partida)
-    Zclick(190, 370, 810, 490, ranking)
-    Zclick(190, 520, 810, 640, cerrar)
+    Zclick(280, 255, 720, 345, nueva_partida)
+    Zclick(280, 355, 720, 445, ranking)
+    Zclick(280, 455, 720, 545, cerrar)
 
     win.img_fondo = img_fondo
     win.img_nueva = img_nueva
     win.img_ranking = img_ranking
     win.img_salir = img_salir
-
 
 def vtn_facciones(padre, titulo, on_select):
     win = tk.Toplevel(padre)
@@ -420,13 +439,27 @@ def vtn_segunda_sesion(menu_win, jugador1, faccion1):
 
         if jugador2:
             win.destroy()
+
+            def seleccionar_faccion_j2(f2):
+                if f2 == faccion1:
+                    messagebox.showwarning(
+                        "Facción ocupada",
+                        "El segundo jugador debe escoger una facción diferente."
+                    )
+                    vtn_facciones(
+                        menu_win,
+                        f"FACCIÓN — {jugador2.username}",
+                        seleccionar_faccion_j2
+                    )
+                    return
+
+                vtn_partida(menu_win, jugador1, jugador2, faccion1, f2)
+
             vtn_facciones(
                 menu_win,
                 f"FACCIÓN — {jugador2.username}",
-                lambda f2: vtn_partida(menu_win, jugador1, jugador2, faccion1, f2)
+                seleccionar_faccion_j2
             )
-        else:
-            messagebox.showerror("Error", msg, parent=win)
 
     def volver():
         win.destroy()
@@ -525,9 +558,7 @@ def vtn_informacion(padre):
     win.img_fondo = img_fondo
     win.img_btn_volver = img_btn_volver
 
-
-CELL = 85
-
+CELL = 85 #tamaño de cada celda del tablero
 ESTILOS = {
     "olimpo": ("#1a5fb4", "OLI"),
     "oscura": ("#5e35b1", "OSC"),
@@ -551,14 +582,12 @@ def cargar_imagen_faccion(faccion, tipo):
         return None
 
 
-def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
+def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2): #el corazon del codigo, maneja toda la partida: rondas, fases y combate
     partida = Partida(jugador1, jugador2)
-
     win = tk.Toplevel(padre)
     win.title("Partida")
     centrar_ventana(win, 1200, 830)
     win.resizable(False, False)
-
     ronda_actual = [None]
     tipo_seleccionado = [None]
     turno = [1]
@@ -775,14 +804,24 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         else:
             lbl_log.config(text=f"Seleccionado: {tipo}")
 
-    def cargar_tarjeta(nombre, ancho=100, alto=100):
-        img = ImageTk.PhotoImage(Image.open(f"Imagenes/{nombre}.png").resize((ancho, alto)))
-        return img
+    tarjetas_labels = {}
+    tarjetas_normales = {}
+    tarjetas_info = {}
 
-    def crear_tarjeta(frame, imagen, tipo):
-        lbl = tk.Label(frame, image=imagen, bg="#1e1e2e", cursor="hand2")
+    def crear_tarjeta(frame, imagen_normal, imagen_info, tipo):
+        tarjetas_normales[tipo] = imagen_normal
+        tarjetas_info[tipo] = imagen_info
+        lbl = tk.Label(frame, image=imagen_normal, bg="#1e1e2e", cursor="hand2")
         lbl.pack(side="left", padx=2)
-        lbl.bind("<Button-1>", lambda e, t=tipo: seleccionar(t))
+        tarjetas_labels[tipo] = lbl
+
+        def click_tarjeta():
+            seleccionar(tipo)
+            for t, label in tarjetas_labels.items():
+                label.config(image=tarjetas_normales[t])
+            lbl.config(image=tarjetas_info[tipo])
+
+        lbl.bind("<Button-1>", lambda e: click_tarjeta())
         lbl.bind("<Enter>", lambda e: lbl.config(bg="#2e2e45"))
         lbl.bind("<Leave>", lambda e: lbl.config(bg="#1e1e2e"))
 
@@ -808,11 +847,22 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         img_madera = cargar_tarjeta("tarjeta_madera")
         img_metal = cargar_tarjeta("tarjeta_metal")
 
+        info_olimpo = cargar_tarjeta("info_olimpo")
+        info_oscura = cargar_tarjeta("info_oscura")
+        info_volcan = cargar_tarjeta("info_volcan")
+        info_madera = cargar_tarjeta("info_madera")
+        info_metal = cargar_tarjeta("info_metal")
+
         tarjetas["olimpo"] = img_olimpo
         tarjetas["oscura"] = img_oscura
         tarjetas["volcan"] = img_volcan
         tarjetas["madera"] = img_madera
         tarjetas["metal"] = img_metal
+        tarjetas["info_olimpo"] = info_olimpo
+        tarjetas["info_oscura"] = info_oscura
+        tarjetas["info_volcan"] = info_volcan
+        tarjetas["info_madera"] = info_madera
+        tarjetas["info_metal"] = info_metal
 
         frame_torres = tk.Frame(frame_tipos, bg="#1e1e2e")
         frame_torres.pack(pady=(0, 2))
@@ -823,9 +873,9 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         fila_torres = tk.Frame(frame_torres, bg="#1e1e2e")
         fila_torres.pack()
 
-        crear_tarjeta(fila_torres, img_olimpo, "olimpo")
-        crear_tarjeta(fila_torres, img_oscura, "oscura")
-        crear_tarjeta(fila_torres, img_volcan, "volcan")
+        crear_tarjeta(fila_torres, img_olimpo, info_olimpo, "olimpo")
+        crear_tarjeta(fila_torres, img_oscura, info_oscura, "oscura")
+        crear_tarjeta(fila_torres, img_volcan, info_volcan, "volcan")
 
         frame_muros = tk.Frame(frame_tipos, bg="#1e1e2e")
         frame_muros.pack(pady=(2, 5))
@@ -836,8 +886,8 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         fila_muros = tk.Frame(frame_muros, bg="#1e1e2e")
         fila_muros.pack()
 
-        crear_tarjeta(fila_muros, img_madera, "madera")
-        crear_tarjeta(fila_muros, img_metal, "metal")
+        crear_tarjeta(fila_muros, img_madera, info_madera, "madera")
+        crear_tarjeta(fila_muros, img_metal, info_metal, "metal")
 
         btn_accion.config(
             text="⚔ TERMINAR COLOCACIÓN ⚔",
@@ -876,6 +926,12 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         lbl_dinero.config(text=f"Dinero: {ronda.dinero_defensor}")
         dibujar_entidades()
 
+    def cargar_tarjeta(nombre, ancho=100, alto=120):
+        img = ImageTk.PhotoImage(
+            Image.open(f"Imagenes/{nombre}.png").resize((ancho, alto))
+        )
+        return img
+
     def mostrar_fase_atacante():
         ronda = ronda_actual[0]
 
@@ -889,6 +945,9 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         for w in frame_tipos.winfo_children():
             w.destroy()
 
+        tarjetas_labels.clear()
+        tarjetas_normales.clear()
+        tarjetas_info.clear()
         tarjetas_atacante = {}
 
         img_flecha = cargar_tarjeta("tarjeta_flecha")
@@ -897,11 +956,22 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         img_rey_card = cargar_tarjeta("tarjeta_rey")
         img_fireball = cargar_tarjeta("tarjeta_fuego")
 
+        info_flecha = cargar_tarjeta("info_flecha")
+        info_ninja = cargar_tarjeta("info_ninja")
+        info_hielo = cargar_tarjeta("info_hielo")
+        info_rey = cargar_tarjeta("info_rey")
+        info_fuego = cargar_tarjeta("info_fuego")
+
         tarjetas_atacante["flechas"] = img_flecha
         tarjetas_atacante["ninja"] = img_ninja_card
         tarjetas_atacante["reina_hielo"] = img_reina
         tarjetas_atacante["rey_barbaro"] = img_rey_card
         tarjetas_atacante["fireball"] = img_fireball
+        tarjetas_atacante["info_flecha"] = info_flecha
+        tarjetas_atacante["info_ninja"] = info_ninja
+        tarjetas_atacante["info_hielo"] = info_hielo
+        tarjetas_atacante["info_rey"] = info_rey
+        tarjetas_atacante["info_fuego"] = info_fuego
 
         tk.Label(frame_tipos, text="UNIDADES", bg="#1e1e2e", fg="#f6d32d",
                  font=("Arial", 10, "bold")).pack(pady=(4, 8))
@@ -911,19 +981,17 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
 
         fila2 = tk.Frame(frame_tipos, bg="#1e1e2e")
         fila2.pack(pady=3)
-
-        crear_tarjeta(fila1, img_flecha, "flechas")
-        crear_tarjeta(fila1, img_ninja_card, "ninja")
-        crear_tarjeta(fila1, img_reina, "reina_hielo")
-
-        crear_tarjeta(fila2, img_rey_card, "rey_barbaro")
-        crear_tarjeta(fila2, img_fireball, "fireball")
+        crear_tarjeta(fila1, img_flecha, info_flecha, "flechas")
+        crear_tarjeta(fila1, img_ninja_card, info_ninja, "ninja")
+        crear_tarjeta(fila1, img_reina, info_hielo, "reina_hielo")
+        crear_tarjeta(fila2, img_rey_card, info_rey, "rey_barbaro")
+        crear_tarjeta(fila2, img_fireball, info_fuego, "fireball")
 
         btn_accion.config(
             text="🔥 INICIAR COMBATE 🔥",
-            bg="#e01b24",
+            bg="#1565c0",
             fg="white",
-            activebackground="#ff4d4d",
+            activebackground="#1976d2",
             activeforeground="white",
             state="normal",
             command=iniciar_combate
@@ -965,7 +1033,7 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
         turno[0] = 1
         auto_turno()
 
-    def auto_turno():
+    def auto_turno(): # es automático hasta que gane atacante o defensor
         ronda = ronda_actual[0]
         ronda.ejecutar_turno_combate()
         dibujar_entidades()
@@ -993,11 +1061,11 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
                     command=lambda: None
                 )
             else:
-                btn_accion.config(
-                    text=f"Siguiente ronda ({partida.victorias_j1}-{partida.victorias_j2})",
-                    bg="#1a5fb4",
-                    fg="white",
-                    command=iniciar_ronda
+                btn_accion.config(state="disabled")
+                ventana_siguiente_ronda(
+                    win,
+                    f"Siguiente ronda | {jugador1.username}: {partida.victorias_j1} - {jugador2.username}: {partida.victorias_j2}",
+                    iniciar_ronda
                 )
         else:
             win.after(700, auto_turno)
@@ -1023,3 +1091,6 @@ def vtn_partida(padre, jugador1, jugador2, faccion1, faccion2):
     win.img_flechas = img_flechas
     iniciar_ronda()
 vtn_principal()
+
+
+
